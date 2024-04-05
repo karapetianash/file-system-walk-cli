@@ -50,7 +50,6 @@ func run(root string, out io.Writer, cfg config) error {
 			}
 
 			// If list was explicitly set, don't do anything else
-
 			if cfg.list {
 				return listFile(path, out)
 			}
