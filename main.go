@@ -22,7 +22,7 @@ func main() {
 	root := flag.String("root", ".", "Root directory to start.")
 	ext := flag.String("ext", "", "File extension to filter out.")
 	list := flag.Bool("list", false, "List files only.")
-	size := flag.Int64("size", 0, "Minimum file size.")
+	size := flag.Int64("size", 0, "Minimum file size in bytes.")
 	flag.Parse()
 
 	c := config{
