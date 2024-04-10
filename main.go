@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 type config struct {
@@ -24,6 +25,8 @@ type config struct {
 	wLog io.Writer
 	// archive directory
 	archive string
+	// modification time
+	modSince string
 }
 
 func main() {
@@ -36,6 +39,7 @@ func main() {
 	root := flag.String("root", ".", "Root directory to start.")
 	ext := flag.String("ext", "", "File extensions to filter out.")
 	list := flag.Bool("list", false, "List files only.")
+	modSince := flag.String("since", "", "Time of file modification.")
 	size := flag.Int64("size", 0, "Minimum file size in bytes.")
 	del := flag.Bool("del", false, "Delete files.")
 	logFile := flag.String("log", "", "Log deletes to this file.")
@@ -57,12 +61,13 @@ func main() {
 	}
 
 	c := config{
-		ext:     *ext,
-		size:    *size,
-		list:    *list,
-		del:     *del,
-		wLog:    f,
-		archive: *archive,
+		ext:      *ext,
+		size:     *size,
+		list:     *list,
+		del:      *del,
+		wLog:     f,
+		archive:  *archive,
+		modSince: *modSince,
 	}
 
 	if err = run(*root, os.Stdout, c); err != nil {
@@ -80,7 +85,12 @@ func run(root string, out io.Writer, cfg config) error {
 			}
 
 			extList := strings.Fields(cfg.ext)
-			if filterOut(path, extList, cfg.size, info) {
+			afterUTC, err := time.Parse(time.RFC822Z, cfg.modSince)
+			if err != nil {
+				return err
+			}
+
+			if filterOut(path, extList, cfg.size, afterUTC, info) {
 				return nil
 			}
 
