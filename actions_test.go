@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strings"
 
 	"testing"
 )
@@ -28,10 +29,34 @@ func TestFilterOut(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			f := filterOut(tc.file, tc.ext, tc.minSize, info)
+			extList := strings.Fields(tc.ext)
+			f := filterOut(tc.file, extList, tc.minSize, info)
 
 			if f != tc.expected {
 				t.Errorf("Expected '%t', got '%t' instead\n", tc.expected, f)
+			}
+		})
+	}
+}
+
+func TestListContainsExt(t *testing.T) {
+	testCases := []struct {
+		name     string
+		list     []string
+		ext      string
+		expected bool
+	}{
+		{"ListContain", []string{".log", ".rar", ".png", ".jpeg", "xlsb", ".txt"}, ".log", true},
+		{"ListNoContain", []string{".log", ".rar", ".png", ".jpeg", "xlsb", ".txt"}, ".zip", false},
+		{"ListEmptyNoContain", []string{}, ".zip", false},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			res := listContainsExt(tc.list, tc.ext)
+
+			if tc.expected != res {
+				t.Errorf("Expected %t, got %t instead.", tc.expected, res)
 			}
 		})
 	}

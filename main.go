@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type config struct {
@@ -26,8 +27,14 @@ type config struct {
 }
 
 func main() {
+	flag.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(), "%s tool. Developed for educational purposes.\n", os.Args[0])
+		fmt.Fprintln(flag.CommandLine.Output(), "Usage information:")
+		flag.PrintDefaults()
+	}
+
 	root := flag.String("root", ".", "Root directory to start.")
-	ext := flag.String("ext", "", "File extension to filter out.")
+	ext := flag.String("ext", "", "File extensions to filter out.")
 	list := flag.Bool("list", false, "List files only.")
 	size := flag.Int64("size", 0, "Minimum file size in bytes.")
 	del := flag.Bool("del", false, "Delete files.")
@@ -62,7 +69,6 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-
 }
 
 func run(root string, out io.Writer, cfg config) error {
@@ -73,7 +79,8 @@ func run(root string, out io.Writer, cfg config) error {
 				return err
 			}
 
-			if filterOut(path, cfg.ext, cfg.size, info) {
+			extList := strings.Fields(cfg.ext)
+			if filterOut(path, extList, cfg.size, info) {
 				return nil
 			}
 
