@@ -85,12 +85,17 @@ func run(root string, out io.Writer, cfg config) error {
 			}
 
 			extList := strings.Fields(cfg.ext)
-			afterUTC, err := time.Parse(time.RFC822Z, cfg.modSince)
-			if err != nil {
-				return err
+
+			var afterRFC822Z time.Time
+			if cfg.modSince != "" {
+				afterRFC822Z, err = time.Parse(time.RFC822Z, cfg.modSince)
+				if err != nil {
+					return err
+				}
+
 			}
 
-			if filterOut(path, extList, cfg.size, afterUTC, info) {
+			if filterOut(path, extList, cfg.size, afterRFC822Z, info) {
 				return nil
 			}
 
