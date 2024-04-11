@@ -1,5 +1,5 @@
 ## Description
-This CLI tool crawls into file system directories looking for specific files. When the tool finds the files it’s looking for (filtered files), it can list, archive, or delete them.
+This cross-platform CLI tool crawls into file system directories looking for specific files. When the tool finds the files it’s looking for (filtered files), it can list, archive, or delete them.
 This is also a useful tool that helps you back up and clean up file
 systems.
 
